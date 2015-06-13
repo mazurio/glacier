@@ -1,5 +1,10 @@
+# Studio
 *.iml
-=======
+.idea
+gradlew
+gradlew.bat
+gradle/
+
 # Built application files
 *.apk
 *.ap_
