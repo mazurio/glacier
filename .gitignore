@@ -1,9 +1,12 @@
 # Studio
+
 *.iml
 .idea
+
 gradlew
 gradlew.bat
 gradle/
+cache/
 
 # Built application files
 *.apk

@@ -1,4 +1,4 @@
-package io.mazur.glacier.file.model;
+package io.mazur.glacier.model;
 
 import java.io.Serializable;
 

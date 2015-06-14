@@ -2,6 +2,8 @@ package io.mazur.glacier.file;
 
 import android.content.Context;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -47,7 +49,9 @@ public class FileObjectPersister {
         }
 
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(new File(mCacheDirectory, cacheKey));
+            FileOutputStream fileOutputStream = new FileOutputStream(new File(mCacheDirectory,
+                    createFileName(cacheKey, data.getClass())));
+
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
             objectOutputStream.writeObject(data);
@@ -61,11 +65,11 @@ public class FileObjectPersister {
         return false;
     }
 
-    public Object getDataFromCache(String cacheKey, long duration) {
-        Object object = null;
+    public <T> Object getDataFromCache(String cacheKey, Class<T> dataType, long duration) {
+        T object = null;
 
         try {
-            File file = new File(mCacheDirectory, cacheKey);
+            File file = new File(mCacheDirectory, createFileName(cacheKey, dataType));
 
             if(!file.exists() || !isCacheValid(file.lastModified(), duration)) {
                 return null;
@@ -75,7 +79,7 @@ public class FileObjectPersister {
 
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
-            object = objectInputStream.readObject();
+            object = (T) objectInputStream.readObject();
 
             objectInputStream.close();
         } catch (Exception e) {
@@ -83,6 +87,11 @@ public class FileObjectPersister {
         }
 
         return object;
+
+    }
+
+    public <T> String createFileName(String cacheKey, Class<T> dataType) {
+        return "Class." + dataType.getName() + ".With.Key." + (cacheKey.hashCode());
     }
 
     public boolean isCacheValid(long fileLastModified, long duration) {
@@ -90,4 +99,16 @@ public class FileObjectPersister {
 
         return (duration == Duration.ALWAYS_RETURNED || timeInCache <= duration);
     }
+
+    public void removeAllDataFromCache() {
+        try {
+            FileUtils.cleanDirectory(mCacheDirectory);
+        } catch (IOException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+
+    // removeCacheOlderThan(15 minutes)
+    // removeCacheForType(String.class)
+    // removeCacheForTypeOlderThan(String.class, 15 minutes)
 }

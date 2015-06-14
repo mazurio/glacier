@@ -7,6 +7,10 @@ allprojects {
 }
 
 buildscript {
+    repositories {
+        mavenCentral()
+    }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
     }
@@ -36,8 +40,15 @@ android {
     }
 }
 
+tasks.withType(Test) {
+    maxParallelForks = 1
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
+
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
 }
