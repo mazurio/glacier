@@ -42,6 +42,12 @@ ArrayList<String> fromCache = new ArrayList<>();
 fromCache = Glacier.get("list", fromCache.getClass());
 ```
 
+## Roadmap
+1. Synchronous and Asynchronous get and getOrElse.
+2. Networking examples (Retrofit).
+3. Example application that uses Glacier.
+4. RxJava integration.
+
 ## Download
 
-TODO
+Will be available on Maven Central later on, currently work in progress.
