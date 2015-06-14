@@ -3,6 +3,8 @@ package io.mazur.glacier;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import static org.junit.Assert.*;
+
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GlacierTest {
@@ -37,5 +39,22 @@ public class GlacierTest {
 
         assertEquals(cacheValue, Glacier.get(cacheKey, String.class));
         assertEquals(cacheValue, Glacier.get(cacheKey, String.class, Duration.ALWAYS_RETURNED));
+    }
+
+    @Test
+    public void putArrayListInCacheTest() throws Exception {
+        ArrayList<String> stringArrayList = new ArrayList<>();
+
+        stringArrayList.add("One");
+        stringArrayList.add("Two");
+
+        Glacier.put("list", stringArrayList);
+
+        ArrayList<String> fromCache = new ArrayList<>();
+
+        fromCache = Glacier.get("list", fromCache.getClass());
+
+        assertEquals("One", fromCache.get(0));
+        assertEquals("Two", fromCache.get(1));
     }
 }
