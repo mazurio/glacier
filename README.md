@@ -21,6 +21,27 @@ String result = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTE
 });
 ```
 
+Or make it even simpler with lambda
+
+```
+String result = Glacier.getOrElse("key", String.class, Duration.FIVE_MINUTES, () -> "An amazing string.");
+```
+
+Storing lists
+
+```
+ArrayList<String> stringArrayList = new ArrayList<>();
+
+stringArrayList.add("One");
+stringArrayList.add("Two");
+
+Glacier.put("list", stringArrayList);
+
+ArrayList<String> fromCache = new ArrayList<>();
+
+fromCache = Glacier.get("list", fromCache.getClass());
+```
+
 ## Download
 
 TODO
