@@ -2,6 +2,9 @@ package io.mazur.glacier;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
+
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class GlacierTest {

@@ -6,8 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import io.mazur.glacier.file.FileObjectPersister;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 public class Glacier {
     public interface Callback<T> {
@@ -15,6 +18,8 @@ public class Glacier {
     }
 
     private static FileObjectPersister mFileObjectPersister;
+
+    private static HashMap<String, PublishSubject> hashMap = new HashMap<>();
 
     public synchronized static void init() {
         mFileObjectPersister = new FileObjectPersister();
@@ -40,6 +45,16 @@ public class Glacier {
         mFileObjectPersister.removeAllDataFromCache();
     }
 
+    public synchronized static <T> Observable<T> getObservable(String cacheKey, Class<T> dataType) {
+        if(!hashMap.containsKey(cacheKey)) {
+            PublishSubject<T> publishSubject = PublishSubject.create();
+
+            hashMap.put(cacheKey, publishSubject);
+        }
+
+        return hashMap.get(cacheKey);
+    }
+
     /**
      * Put object into cache with given cache key used later to retrieve it.
      *
@@ -49,6 +64,10 @@ public class Glacier {
     public synchronized static <T> void put(@NonNull String cacheKey, @NonNull T data) {
         try {
             mFileObjectPersister.putDataInCache(cacheKey, data);
+
+            if(hashMap.containsKey(cacheKey)) {
+                hashMap.get(cacheKey).onNext(data);
+            }
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
         }
@@ -66,21 +85,29 @@ public class Glacier {
 
     @NonNull
     public synchronized static <T> T getOrElse(@NonNull String cacheKey, @NonNull Class<T> dataType,
-                                  @NonNull long cacheDuration, @NonNull Callback<T> callback) {
+                                               @NonNull long cacheDuration, @NonNull Callback<T> callback) {
         T cacheObject = (T) mFileObjectPersister.getDataFromCache(cacheKey, dataType, cacheDuration);
 
         if(cacheObject == null) {
-            T persistObject = callback.onCacheNotFound();
+            cacheObject = callback.onCacheNotFound();
 
-            try {
-                mFileObjectPersister.putDataInCache(cacheKey, persistObject);
-            } catch (IOException e) {
-                System.out.println("Exception: " + e.getMessage());
-            }
-
-            return persistObject;
-        } else {
-            return cacheObject;
+            put(cacheKey, cacheObject);
         }
+
+        return cacheObject;
+    }
+
+    @NonNull
+    public synchronized static <T> T getOrElse(@NonNull String cacheKey, @NonNull Class<T> dataType,
+                                               @NonNull Callback<T> callback) {
+        T cacheObject = (T) mFileObjectPersister.getDataFromCache(cacheKey, dataType, Duration.ALWAYS_RETURNED);
+
+        if(cacheObject == null) {
+            cacheObject = callback.onCacheNotFound();
+
+            put(cacheKey, cacheObject);
+        }
+
+        return cacheObject;
     }
 }

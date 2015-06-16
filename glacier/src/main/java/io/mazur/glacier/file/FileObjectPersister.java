@@ -66,7 +66,8 @@ public class FileObjectPersister {
         return false;
     }
 
-    public synchronized <T> Object getDataFromCache(@NonNull String cacheKey, @NonNull Class<T> dataType, long duration) {
+    public synchronized <T> Object getDataFromCache(@NonNull String cacheKey,
+                                                    @NonNull Class<T> dataType, long duration) {
         T object = null;
 
         try {
