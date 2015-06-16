@@ -1,6 +1,7 @@
 package io.mazur.glacier.file;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,7 +20,7 @@ public class FileObjectPersister {
 
     private File mCacheDirectory;
 
-    public void setCacheDirectory(Context context) throws CacheDirectoryCreationException {
+    public synchronized void setCacheDirectory(@NonNull Context context) throws CacheDirectoryCreationException {
         if(mCacheDirectory == null) {
             mCacheDirectory = new File(context.getCacheDir(), CACHE_DIRECTORY);
         }
@@ -29,7 +30,7 @@ public class FileObjectPersister {
         }
     }
 
-    public void setCacheDirectory(File baseCacheDirectory) throws CacheDirectoryCreationException {
+    public synchronized void setCacheDirectory(@NonNull File baseCacheDirectory) throws CacheDirectoryCreationException {
         if(mCacheDirectory == null) {
             mCacheDirectory = new File(baseCacheDirectory, CACHE_DIRECTORY);
         }
@@ -43,7 +44,7 @@ public class FileObjectPersister {
         return mCacheDirectory;
     }
 
-    public <T> boolean putDataInCache(String cacheKey, T data) throws IOException {
+    public synchronized <T> boolean putDataInCache(@NonNull String cacheKey, @NonNull T data) throws IOException {
         if(cacheKey == null || data == null) {
             return false;
         }
@@ -65,7 +66,7 @@ public class FileObjectPersister {
         return false;
     }
 
-    public <T> Object getDataFromCache(String cacheKey, Class<T> dataType, long duration) {
+    public synchronized <T> Object getDataFromCache(@NonNull String cacheKey, @NonNull Class<T> dataType, long duration) {
         T object = null;
 
         try {
@@ -90,17 +91,17 @@ public class FileObjectPersister {
 
     }
 
-    public <T> String createFileName(String cacheKey, Class<T> dataType) {
+    public <T> String createFileName(@NonNull String cacheKey, @NonNull Class<T> dataType) {
         return "Class." + dataType.getName() + ".With.Key." + (cacheKey.hashCode());
     }
 
-    public boolean isCacheValid(long fileLastModified, long duration) {
+    public boolean isCacheValid(@NonNull long fileLastModified, @NonNull long duration) {
         long timeInCache = System.currentTimeMillis() - fileLastModified;
 
         return (duration == Duration.ALWAYS_RETURNED || timeInCache <= duration);
     }
 
-    public void removeAllDataFromCache() {
+    public synchronized void removeAllDataFromCache() {
         try {
             FileUtils.cleanDirectory(mCacheDirectory);
         } catch (IOException e) {

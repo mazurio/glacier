@@ -1,6 +1,8 @@
 package io.mazur.glacier;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,7 @@ public class Glacier {
 
     private static FileObjectPersister mFileObjectPersister;
 
-    public static void init() {
+    public synchronized static void init() {
         mFileObjectPersister = new FileObjectPersister();
 
         try {
@@ -24,7 +26,7 @@ public class Glacier {
         }
     }
 
-    public static void init(Context context) {
+    public synchronized static void init(@NonNull Context context) {
         mFileObjectPersister = new FileObjectPersister();
 
         try {
@@ -34,11 +36,17 @@ public class Glacier {
         }
     }
 
-    public static void removeAllDataFromCache() {
+    public synchronized static void removeAllDataFromCache() {
         mFileObjectPersister.removeAllDataFromCache();
     }
 
-    public static <T> void put(String cacheKey, T data) {
+    /**
+     * Put object into cache with given cache key used later to retrieve it.
+     *
+     * @param cacheKey cache key in format [a-z0-9].
+     * @param data data type, e.g. String.class.
+     */
+    public synchronized static <T> void put(@NonNull String cacheKey, @NonNull T data) {
         try {
             mFileObjectPersister.putDataInCache(cacheKey, data);
         } catch (Exception e) {
@@ -46,15 +54,19 @@ public class Glacier {
         }
     }
 
-    public static <T> T get(String cacheKey, Class<T> dataType) {
+    @Nullable
+    public synchronized static <T> T get(@NonNull String cacheKey, @NonNull Class<T> dataType) {
         return (T) mFileObjectPersister.getDataFromCache(cacheKey, dataType, Duration.ALWAYS_RETURNED);
     }
 
-    public static <T> T get(String cacheKey, Class<T> dataType, long cacheDuration) {
+    @Nullable
+    public synchronized static <T> T get(@NonNull String cacheKey, @NonNull Class<T> dataType, @NonNull long cacheDuration) {
         return (T) mFileObjectPersister.getDataFromCache(cacheKey, dataType, cacheDuration);
     }
 
-    public static <T> T getOrElse(String cacheKey, Class<T> dataType, long cacheDuration, Callback<T> callback) {
+    @NonNull
+    public synchronized static <T> T getOrElse(@NonNull String cacheKey, @NonNull Class<T> dataType,
+                                  @NonNull long cacheDuration, @NonNull Callback<T> callback) {
         T cacheObject = (T) mFileObjectPersister.getDataFromCache(cacheKey, dataType, cacheDuration);
 
         if(cacheObject == null) {

@@ -4,9 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Array;
-import java.util.*;
-
 public class GlacierTest {
     @Before
     public void before() {
