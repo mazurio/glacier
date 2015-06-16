@@ -1,1 +1,2 @@
-include ':glacier'
+include 'glacier'
+include 'glacier-example'
