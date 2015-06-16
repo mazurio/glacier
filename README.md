@@ -6,13 +6,13 @@ Glacier is a simple, in file, object persistence layer and cache. Currently work
 
 In your Application.onCreate().
 
-```
+```java
 Glacier.init(getApplicationContext());
 ```
 
 And then anywhere in the application
 
-```
+```java
 String result = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTES, new Glacier.Callback<String>() {
     @Override
     public String onCacheNotFound() {
@@ -23,13 +23,13 @@ String result = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTE
 
 Or make it even simpler with lambda
 
-```
+```java
 String result = Glacier.getOrElse("key", String.class, Duration.FIVE_MINUTES, () -> "An amazing string.");
 ```
 
 Storing lists
 
-```
+```java
 ArrayList<String> stringArrayList = new ArrayList<>();
 
 stringArrayList.add("One");
