@@ -1,4 +1,4 @@
-# Glacier [![Release](https://img.shields.io/github/release/jitpack/gradle-simple.svg?label=maven)](https://jitpack.io/#mazurio/glacier)
+# Glacier [![Release](https://img.shields.io/github/release/mazurio/glacier.svg?label=maven)](https://jitpack.io/#mazurio/glacier)
 
 Glacier is a simple, in file, object persistence layer and cache. Currently work in progress.
 
