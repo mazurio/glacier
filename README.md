@@ -54,4 +54,16 @@ Let's make it even better with RxJava:
 
 ## Download
 
-Will be available on Maven Central later on, currently work in progress.
+Add
+
+```
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+```
+
+```
+compile 'com.github.mazurio.glacier:glacier:0.0.3'
+```
