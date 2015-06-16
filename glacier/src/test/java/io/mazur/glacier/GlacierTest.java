@@ -20,7 +20,7 @@ public class GlacierTest {
 
     @Test
     public void cacheNotFoundTest() {
-        String cacheResult = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTES, new Glacier.Callback<String>() {
+        String cacheResult = Glacier.getOrElse("cacheKey", String.class, Duration.ONE_MINUTE, new Glacier.Callback<String>() {
             @Override
             public String onCacheNotFound() {
                 return "cacheNotFound";
