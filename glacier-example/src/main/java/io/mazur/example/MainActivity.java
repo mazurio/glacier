@@ -16,15 +16,34 @@ import butterknife.OnClick;
 import io.mazur.glacier.Duration;
 import io.mazur.glacier.Glacier;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
+import rx.Subscription;
+import rx.android.observables.AndroidObservable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends Activity {
-    @InjectView(R.id.text_view) TextView mTextView;
+    @InjectView(R.id.first_text_view)
+    TextView mFirstTextView;
+
+    @InjectView(R.id.second_text_view)
+    TextView mSecondTextView;
 
     private static final String CACHE_KEY = "cacheKey;";
+
+    Observable<String> cacheObservable;
+
+    CompositeSubscription compositeSubscription = new CompositeSubscription();
+
+    @OnClick(R.id.first_button)
+    public void subscribe(View view) {
+        Log.d("RxJava", "Subscribed new TextView");
+
+        compositeSubscription.add(cacheObservable.subscribe(s -> {
+            Log.d("RxJava", "Set to: " + s);
+
+            mFirstTextView.setText(s);
+        }));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +53,11 @@ public class MainActivity extends Activity {
 
         ButterKnife.inject(this);
 
-        Observable<String> o = Glacier.getObservable(CACHE_KEY, String.class)
-                .subscribeOn(AndroidSchedulers.mainThread());
+        cacheObservable = Glacier.getObservable(CACHE_KEY, String.class);
 
-        o.subscribe(s -> mTextView.setText(s));
+        AndroidObservable.bindActivity(this, cacheObservable);
+
+        compositeSubscription.add(cacheObservable.subscribe(s -> mSecondTextView.setText(s)));
     }
 
     @Override
@@ -52,6 +72,8 @@ public class MainActivity extends Activity {
         super.onPause();
 
         mHandler.removeCallbacksAndMessages(null);
+
+        compositeSubscription.unsubscribe();
     }
 
     private static final Handler mHandler = new Handler();

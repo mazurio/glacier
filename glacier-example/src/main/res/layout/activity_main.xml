@@ -6,8 +6,19 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/first_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Subscribe TextView"/>
+
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/first_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/second_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
