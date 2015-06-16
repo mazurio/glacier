@@ -4,13 +4,13 @@ Glacier is a simple, in file, object persistence layer and cache. Currently work
 
 ## Usage
 
-In your Application.onCreate().
+In your Application.onCreate():
 
 ```java
 Glacier.init(getApplicationContext());
 ```
 
-And then anywhere in the application
+And then anywhere in the application:
 
 ```java
 String result = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTES, new Glacier.Callback<String>() {
@@ -21,13 +21,13 @@ String result = Glacier.getOrElse("cacheKey", String.class, Duration.FIVE_MINUTE
 });
 ```
 
-Or make it even simpler with lambda
+Or make it even simpler with lambda:
 
 ```java
 String result = Glacier.getOrElse("key", String.class, Duration.FIVE_MINUTES, () -> "An amazing string.");
 ```
 
-Storing lists
+Storing complicated objects such as lists:
 
 ```java
 ArrayList<String> stringArrayList = new ArrayList<>();
@@ -40,6 +40,16 @@ Glacier.put("list", stringArrayList);
 ArrayList<String> fromCache = new ArrayList<>();
 
 fromCache = Glacier.get("list", fromCache.getClass());
+```
+
+Let's make it even better with RxJava:
+
+```java
+ Glacier.getObservable("cacheKey", String.class)
+        .subscribeOn(AndroidSchedulers.mainThread())
+        .subscribe(s -> {
+            mTextView.setText("Title: " + s); 
+        });
 ```
 
 ## Download
