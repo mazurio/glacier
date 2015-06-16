@@ -54,8 +54,6 @@ Let's make it even better with RxJava:
 
 ## Download
 
-Add
-
 ```
 repositories {
     maven {
