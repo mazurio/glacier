@@ -63,5 +63,5 @@ repositories {
 ```
 
 ```
-compile 'com.github.mazurio.glacier:glacier:0.0.3'
+compile 'com.github.mazurio:glacier:0.0.3'
 ```
